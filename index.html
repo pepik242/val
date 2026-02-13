@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Special Question</title>
+    <title>Prekvapenie ❤️</title>
     <style>
         body {
             display: flex;
@@ -13,6 +13,7 @@
             margin: 0;
             background-color: #ffe4e1;
             font-family: 'Arial', sans-serif;
+            overflow: hidden; /* Aby sa neobjavili posuvníky pri lietaní tlačidiel */
         }
         .container {
             text-align: center;
@@ -20,53 +21,49 @@
             padding: 50px;
             border-radius: 20px;
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            min-width: 300px;
         }
-        h1 { color: #d63384; }
-        .buttons { margin-top: 30px; position: relative; height: 50px; }
+        h1 { color: #d63384; margin-bottom: 40px; }
+        .buttons { position: relative; height: 100px; }
         button {
             padding: 15px 30px;
             font-size: 18px;
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            transition: transform 0.2s;
-        }
-        #yesBtn { background-color: #ff4d6d; color: white; margin-right: 20px; }
-        #noBtn {
-            background-color: #6c757d;
-            color: white;
             position: absolute;
+            transition: all 0.1s ease;
         }
+        /* Základné pozície tlačidiel */
+        #yesBtn { background-color: #ff4d6d; color: white; left: 20%; }
+        #noBtn { background-color: #6c757d; color: white; right: 20%; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Will you be my Valentine? ❤️</h1>
+        <h1 id="question">Budeš môj Valentín? ❤️</h1>
         <div class="buttons">
-            <button id="yesBtn" onclick="celebrate()">Yes</button>
-            <button id="noBtn">No</button>
+            <button id="yesBtn">Áno</button>
+            <button id="noBtn">Nie</button>
         </div>
     </div>
 
     <script>
-        const noBtn = document.getElementById('noBtn');
         const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
+        const question = document.getElementById('question');
+        
+        let yesAttempts = 0;
+        const maxAttempts = 5; // Koľkokrát musí "Áno" ujsť
 
-        // The "Runaway" Logic
-        noBtn.addEventListener('mouseover', () => {
-            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
-            
-            noBtn.style.left = `${x}px`;
-            noBtn.style.top = `${y}px`;
-        });
-
-        function celebrate() {
-            alert("Yay! I knew you'd say yes! 🥰");
-            // You can also redirect to a cute video or image here
-            // window.location.href = "YOUR_LINK_HERE";
+        // Funkcia na náhodný pohyb
+        function moveButton(btn) {
+            const x = Math.random() * (window.innerWidth - btn.offsetWidth);
+            const y = Math.random() * (window.innerHeight - btn.offsetHeight);
+            btn.style.position = 'fixed';
+            btn.style.left = `${x}px`;
+            btn.style.top = `${y}px`;
         }
-    </script>
-</body>
-</html>
+
+        //
