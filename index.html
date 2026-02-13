@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prekvapenie ❤️</title>
+    <title>Valentínska výzva ❤️</title>
     <style>
         body {
             margin: 0;
@@ -17,31 +17,33 @@
             justify-content: center;
         }
         #window {
-            position: absolute;
+            position: absolute; /* Toto je kľúčové pre pohyb */
             background: white;
             padding: 40px;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             text-align: center;
-            width: 300px;
-            transition: all 0.15s ease-out; /* Plynulý pohyb pri unikaní */
+            width: 280px;
+            z-index: 1000;
+            cursor: pointer;
+            transition: transform 0.1s ease; /* Jemný efekt pri pohybe */
         }
-        h1 { color: #d63384; font-size: 24px; margin-bottom: 30px; }
-        .buttons { display: flex; justify-content: space-around; }
+        h1 { color: #d63384; font-size: 22px; margin-bottom: 30px; pointer-events: none; }
+        .buttons { display: flex; justify-content: space-around; pointer-events: none; }
         button {
             padding: 12px 25px;
             font-size: 16px;
             border: none;
             border-radius: 10px;
-            cursor: pointer;
+            background-color: #ff4d6d;
+            color: white;
         }
-        #yesBtn { background-color: #ff4d6d; color: white; }
-        #noBtn { background-color: #6c757d; color: white; }
+        #noBtn { background-color: #6c757d; }
     </style>
 </head>
 <body>
 
-    <div id="window">
+    <div id="window" style="top: 50%; left: 50%; transform: translate(-50%, -50%);">
         <h1 id="text">Budeš môj Valentín? ❤️</h1>
         <div class="buttons">
             <button id="yesBtn">Áno</button>
@@ -55,22 +57,52 @@
         const yesBtn = document.getElementById('yesBtn');
         
         let attempts = 0;
-        const maxAttempts = 5; // Koľkokrát celé okno utečie
+        const maxAttempts = 7; // Skúsime to 7-krát, nech je sranda
 
-        // Funkcia na posunutie celého okna
         function moveWindow() {
             if (attempts < maxAttempts) {
-                const maxX = window.innerWidth - win.offsetWidth;
-                const maxY = window.innerHeight - win.offsetHeight;
+                // Odstránime centrovanie, aby okno mohlo lietať kamkoľvek
+                win.style.transform = "none";
                 
-                const randomX = Math.floor(Math.random() * maxX);
-                const randomY = Math.floor(Math.random() * maxY);
+                // Vypočítame náhodnú pozíciu (mínus šírka okna, aby nevyletelo mimo obrazovku)
+                const maxX = window.innerWidth - win.offsetWidth - 50;
+                const maxY = window.innerHeight - win.offsetHeight - 50;
                 
-                win.style.left = `${randomX}px`;
-                win.style.top = `${randomY}px`;
+                const randomX = Math.max(20, Math.floor(Math.random() * maxX));
+                const randomY = Math.max(20, Math.floor(Math.random() * maxY));
+                
+                win.style.left = randomX + "px";
+                win.style.top = randomY + "px";
                 
                 attempts++;
                 
-                // Zmena textu počas naháňačky
-                if(attempts === 2) text.innerText = "Chyť si ma! 😂";
-                if(attempts === 4) text.innerText
+                if(attempts > 1) text.innerText = "Ešte ma chyť! 😂";
+                if(attempts === maxAttempts) {
+                    text.innerText = "Dobre, vzdávam sa... ❤️";
+                    win.style.cursor = "default";
+                    // Povolíme klikanie na tlačidlá
+                    document.querySelector('.buttons').style.pointerEvents = "auto";
+                }
+            }
+        }
+
+        // Reakcia na priblíženie myšou k celému oknu
+        win.addEventListener('mouseover', moveWindow);
+
+        // Reakcia na dotyk (pre mobily)
+        win.addEventListener('touchstart', function(e) {
+            if (attempts < maxAttempts) {
+                e.preventDefault();
+                moveWindow();
+            }
+        });
+
+        // Finálna akcia
+        yesBtn.addEventListener('click', () => {
+            alert("Vedel som, že ma nakoniec chytíš! Si môj Valentín! 🥰❤️");
+            text.innerText = "MILUJEM ŤA! ❤️";
+            win.style.backgroundColor = "#fff0f5";
+        });
+    </script>
+</body>
+</html>
