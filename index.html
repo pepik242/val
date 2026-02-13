@@ -21,11 +21,12 @@
             background: white;
             padding: 40px;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
             text-align: center;
             width: 280px;
             z-index: 1000;
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Pružnejší a rýchlejší pohyb */
+            user-select: none;
         }
         h1 { color: #d63384; font-size: 22px; margin-bottom: 30px; pointer-events: none; }
         .buttons { display: flex; justify-content: space-around; pointer-events: none; }
@@ -36,6 +37,7 @@
             border-radius: 10px;
             background-color: #ff4d6d;
             color: white;
+            font-weight: bold;
         }
         #noBtn { background-color: #6c757d; }
     </style>
@@ -56,43 +58,53 @@
         const yesBtn = document.getElementById('yesBtn');
         
         let attempts = 0;
+        let isMoving = false; // Poistka proti preblikávaniu
         
-        // Zoznam tvojich hlášok
         const messages = [
-            "Budeš môj Valentín? ❤️", // Pôvodná
+            "Budeš môj Valentín? ❤️",
             "Chyť si ma! 😂",
-            "Neskoro! Skús znova !",
-            "Ešte stále nič? ",
-            "Máš pomalé prsty! ",
-            "Už si blízko... ",
-            "Skoro si ma mala! ",
-            "Dobre, už stojím... ❤️" // Posledná správa
+            "Neskoro! Skús znova 😜",
+            "Ešte stále nič? 🏎️💨",
+            "Máš pomalé prsty! ✋",
+            "Už si blízko... 😏",
+            "Skoro si ma mala! 🤏",
+            "Dobre, už stojím... ❤️"
         ];
 
         const maxAttempts = messages.length - 1;
 
         function moveWindow() {
-            if (attempts < maxAttempts) {
+            if (attempts < maxAttempts && !isMoving) {
+                isMoving = true;
                 win.style.transform = "none";
                 
-                const maxX = window.innerWidth - win.offsetWidth - 50;
-                const maxY = window.innerHeight - win.offsetHeight - 50;
+                // Získame rozmery obrazovky a okna
+                const winWidth = win.offsetWidth;
+                const winHeight = win.offsetHeight;
                 
-                const randomX = Math.max(20, Math.floor(Math.random() * maxX));
-                const randomY = Math.max(20, Math.floor(Math.random() * maxY));
-                
-                win.style.left = randomX + "px";
-                win.style.top = randomY + "px";
+                // Rozdelíme obrazovku na 4 kvadranty a vyberieme ten, kde okno momentálne NIE JE
+                let newX, newY;
+                const currentX = win.offsetLeft;
+                const currentY = win.offsetTop;
+
+                // Vygenerujeme pozíciu, ktorá je aspoň 300px ďaleko od tej súčasnej
+                do {
+                    newX = Math.random() * (window.innerWidth - winWidth - 40) + 20;
+                    newY = Math.random() * (window.innerHeight - winHeight - 40) + 20;
+                } while (Math.abs(newX - currentX) < 300 && Math.abs(newY - currentY) < 300);
+
+                win.style.left = newX + "px";
+                win.style.top = newY + "px";
                 
                 attempts++;
-                
-                // Zmeníme text podľa aktuálneho pokusu
                 text.innerText = messages[attempts];
-                
-                // Keď sme na poslednej správe, odomkneme tlačidlá
+
                 if(attempts === maxAttempts) {
                     document.querySelector('.buttons').style.pointerEvents = "auto";
                 }
+
+                // Krátka pauza, kým okno znova zareaguje (aby neuskakovalo pri pohybe myšou preč)
+                setTimeout(() => { isMoving = false; }, 400);
             }
         }
 
@@ -105,9 +117,11 @@
         });
 
         yesBtn.addEventListener('click', () => {
-            alert("Vedel som, že ma nakoniec chytíš! Si môj Valentín! 🥰❤️");
+            alert("Konečne! Vedel som, že si ma chytíš. ❤️");
             text.innerText = "MILUJEM ŤA! 🥰";
             win.style.backgroundColor = "#fff0f5";
+            // Zmiznutie tlačidiel po výhre
+            document.querySelector('.buttons').style.display = "none";
         });
     </script>
 </body>
